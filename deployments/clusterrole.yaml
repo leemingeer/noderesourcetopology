@@ -1,0 +1,33 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: topology-updater
+  namespace: kube-system
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - ""
+    resources:
+      - nodes/proxy
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+  - apiGroups:
+      - topology.node.ppio.io
+    resources:
+      - noderesourcetopologies
+    verbs:
+      - create
+      - get
+      - update

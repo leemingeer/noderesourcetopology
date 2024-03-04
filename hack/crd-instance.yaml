@@ -1,0 +1,16 @@
+apiVersion: topology.node.k8s.io/v1alpha1
+kind: NodeResourceTopology
+metaData:
+  name: node1
+attributes:
+topologyPolicies:
+zones:
+- costs:
+  attributes:
+  - name: xx
+    type: Node
+    resources:
+    - name: cpu
+      allocatable: "8"
+      available: "8"
+      capacity: "8"

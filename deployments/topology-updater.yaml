@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: topology-updater
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: topology-updater
+  template:
+    metadata:
+      labels:
+        app: topology-updater
+    spec:
+      containers:
+        - image: localhost/topology-updater:v1-minimal
+          imagePullPolicy: IfNotPresent
+          name: topology-updater
+          ports:
+          - containerPort: 8081
+            name: metrics
+            protocol: TCP
+          args:
+            - -podresources-socket=/host-var/lib/kubelet/pod-resources/kubelet.sock
+            - -kubelet-state-dir=/host-var/lib/kubelet
+            - -pods-fingerprint=true
+            - -sleep-interval=3s
+          command:
+            - topology-updater
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: POD_UID
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.uid
+            - name: NODE_ADDRESS
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.hostIP
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsUser: 0
+          volumeMounts:
+            - mountPath: /host-sys
+              name: host-sys
+            - mountPath: /host-var/lib/kubelet
+              name: kubelet-state-files
+              readOnly: true
+      dnsPolicy: ClusterFirstWithHostNet
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      serviceAccount: nfd-topology-updater
+      serviceAccountName: topology-updater
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - hostPath:
+            path: /sys
+            type: ""
+          name: host-sys
+        - hostPath:
+            path: /var/lib/kubelet
+            type: ""
+          name: kubelet-state-files
