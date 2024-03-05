@@ -5,6 +5,35 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// DEPRECATED (to be removed in v1beta1): use top level attributes if needed
+type TopologyManagerPolicy string
+
+const (
+	// Constants of type TopologyManagerPolicy represent policy of the worker
+	// node's resource management component. It's TopologyManager in kubelet.
+	// DEPRECATED (to be removed in v1beta1): use top level attributes if needed
+	// SingleNUMANodeContainerLevel represent single-numa-node policy of
+	// the TopologyManager
+	SingleNUMANodeContainerLevel TopologyManagerPolicy = "SingleNUMANodeContainerLevel"
+	// SingleNUMANodePodLevel enables pod level resource counting, this policy assumes
+	// TopologyManager policy single-numa-node also was set on the node
+	SingleNUMANodePodLevel TopologyManagerPolicy = "SingleNUMANodePodLevel"
+	// Restricted TopologyManager policy was set on the node
+	Restricted TopologyManagerPolicy = "Restricted"
+	// RestrictedContainerLevel TopologyManager policy was set on the node and TopologyManagerScope was set to pod
+	RestrictedContainerLevel TopologyManagerPolicy = "RestrictedContainerLevel"
+	// RestrictedPodLevel TopologyManager policy was set on the node and TopologyManagerScope was set to pod
+	RestrictedPodLevel TopologyManagerPolicy = "RestrictedPodLevel"
+	// BestEffort TopologyManager policy was set on the node
+	BestEffort TopologyManagerPolicy = "BestEffort"
+	// BestEffort TopologyManager policy was set on the node and TopologyManagerScope was set to container
+	BestEffortContainerLevel TopologyManagerPolicy = "BestEffortContainerLevel"
+	// BestEffort TopologyManager policy was set on the node and TopologyManagerScope was set to pod
+	BestEffortPodLevel TopologyManagerPolicy = "BestEffortPodLevel"
+	// None policy is the default policy and does not perform any topology alignment.
+	None TopologyManagerPolicy = "None"
+)
+
 // +genclient
 // +genclient:nonNamespaced
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
